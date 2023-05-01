@@ -30,6 +30,6 @@ tbl3_pval <- df %>%
 ##### Export Table #############################################################
 write_csv(
   x = tbl3,
-  file = "~/Desktop/research/manuscripts/smith_etal_side_pair_bodycomp/tables_figures/pair_bodycomp_tbl3.csv",
+  file = "~/Desktop/research/manuscripts/smith_etal_pair_anthropometry/tables_figures/pair_bodycomp_tbl3.csv",
   col_names = TRUE
 )

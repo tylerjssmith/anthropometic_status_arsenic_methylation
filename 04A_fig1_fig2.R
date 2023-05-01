@@ -39,7 +39,7 @@ library(tidyverse)
 # Figure 1: Methylation Percentages
 ggsave(
   plot = fig1,
-  filename = "~/Desktop/research/manuscripts/smith_etal_side_pair_bodycomp/tables_figures/pair_bodycomp_fig1.jpg",
+  filename = "~/Desktop/research/manuscripts/smith_etal_pair_anthropometry/tables_figures/pair_bodycomp_fig1.jpg",
   device = "jpeg",
   width = 9,
   height = 9,
@@ -50,7 +50,7 @@ ggsave(
 # Figure 2: Methylation Indices
 ggsave(
   plot = fig2,
-  filename = "~/Desktop/research/manuscripts/smith_etal_side_pair_bodycomp/tables_figures/pair_bodycomp_fig2.jpg",
+  filename = "~/Desktop/research/manuscripts/smith_etal_pair_anthropometry/tables_figures/pair_bodycomp_fig2.jpg",
   device = "jpeg",
   width = 9,
   height = 9,

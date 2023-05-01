@@ -26,7 +26,7 @@ library(tidyverse)
 # Figure S5
 ggsave(
   plot = figS6,
-  filename = "~/Desktop/research/manuscripts/smith_etal_side_pair_bodycomp/tables_figures/pair_bodycomp_figS6.jpg",
+  filename = "~/Desktop/research/manuscripts/smith_etal_pair_anthropometry/tables_figures/pair_bodycomp_figS6.jpg",
   device = "jpeg",
   width = 9,
   height = 9,

@@ -36,7 +36,7 @@ tblS1 %>% head()
 ##### Export Table #############################################################
 write_csv(
   x = tblS1,
-  file = "~/Desktop/research/manuscripts/smith_etal_side_pair_bodycomp/tables_figures/pair_bodycomp_tblS1.csv",
+  file = "~/Desktop/research/manuscripts/smith_etal_pair_anthropometry/tables_figures/pair_bodycomp_tblS1.csv",
   col_names = TRUE
 )
 

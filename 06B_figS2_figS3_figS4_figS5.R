@@ -165,7 +165,7 @@ figS5E <- df %>%
 # Body Mass Index
 ggsave(
   plot = figS2_bmi,
-  filename = "~/Desktop/research/manuscripts/smith_etal_side_pair_bodycomp/tables_figures/pair_bodycomp_figS2.jpg",
+  filename = "~/Desktop/research/manuscripts/smith_etal_pair_anthropometry/tables_figures/pair_bodycomp_figS2.jpg",
   device = "jpeg",
   width = 12,
   height = 8,
@@ -176,7 +176,7 @@ ggsave(
 # Subscapular Skinfold
 ggsave(
   plot = figS3_sub,
-  filename = "~/Desktop/research/manuscripts/smith_etal_side_pair_bodycomp/tables_figures/pair_bodycomp_figS3.jpg",
+  filename = "~/Desktop/research/manuscripts/smith_etal_pair_anthropometry/tables_figures/pair_bodycomp_figS3.jpg",
   device = "jpeg",
   width = 12,
   height = 8,
@@ -187,7 +187,7 @@ ggsave(
 # Triceps Skinfold
 ggsave(
   plot = figS4_tri,
-  filename = "~/Desktop/research/manuscripts/smith_etal_side_pair_bodycomp/tables_figures/pair_bodycomp_figS4.jpg",
+  filename = "~/Desktop/research/manuscripts/smith_etal_pair_anthropometry/tables_figures/pair_bodycomp_figS4.jpg",
   device = "jpeg",
   width = 12,
   height = 8,
@@ -198,7 +198,7 @@ ggsave(
 # MUAC
 ggsave(
   plot = figS5_arm,
-  filename = "~/Desktop/research/manuscripts/smith_etal_side_pair_bodycomp/tables_figures/pair_bodycomp_figS5.jpg",
+  filename = "~/Desktop/research/manuscripts/smith_etal_pair_anthropometry/tables_figures/pair_bodycomp_figS5.jpg",
   device = "jpeg",
   width = 12,
   height = 8,

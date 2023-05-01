@@ -60,7 +60,7 @@ df_figS1 %>% head()
 ##### Generate Figure S1 #######################################################
 (figS1 <- df_figS1 %>%
   ggplot(aes(x = Value)) +
-  geom_histogram(bins = sqrt(nrow(df)), fill = "white", color = "black") +
+  geom_histogram(bins = ceiling(sqrt(nrow(df))), fill = "white", color = "black") +
   facet_wrap(. ~ Label, scales = "free_x", ncol = 2) +
   scale_x_continuous(breaks = seq(-20,20,2)) +
   labs(
@@ -78,7 +78,7 @@ df_figS1 %>%
 ##### Export Figure ############################################################
 ggsave(
   plot = figS1,
-  filename = "~/Desktop/research/manuscripts/smith_etal_side_pair_bodycomp/tables_figures/pair_bodycomp_figS1.jpg",
+  filename = "~/Desktop/research/manuscripts/smith_etal_pair_anthropometry/tables_figures/pair_bodycomp_figS1.jpg",
   device = "jpeg",
   height = 10,
   width = 9,

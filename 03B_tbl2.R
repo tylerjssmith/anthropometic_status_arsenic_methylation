@@ -59,7 +59,7 @@ tbl2 %>% head(n = 9)
 ##### Export Table #############################################################
 write_csv(
   x = tbl2,
-  file = "~/Desktop/research/manuscripts/smith_etal_side_pair_bodycomp/tables_figures/pair_bodycomp_tbl2.csv",
+  file = "~/Desktop/research/manuscripts/smith_etal_pair_anthropometry/tables_figures/pair_bodycomp_tbl2.csv",
   col_names = TRUE
 )
 

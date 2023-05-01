@@ -7,7 +7,7 @@
 
 ##### 01: Setup ################################################################
 # Set Working Directory
-setwd("~/Desktop/research/manuscripts/smith_etal_side_pair_bodycomp/code")
+setwd("~/Desktop/research/manuscripts/smith_etal_pair_anthropometry/code/anthropometric_status_arsenic_methylation/")
 
 # Load Functions
 source("01A_setup_functions.R")
@@ -20,7 +20,7 @@ source("01C_setup_data.R")
 
 ##### 02: Models ###############################################################
 # Set Working Directory
-setwd("~/Desktop/research/manuscripts/smith_etal_side_pair_bodycomp/code")
+setwd("~/Desktop/research/manuscripts/smith_etal_pair_anthropometry/code/anthropometric_status_arsenic_methylation/")
 
 # Fit Linear Regression Models
 source("02A_models_linear.R")
