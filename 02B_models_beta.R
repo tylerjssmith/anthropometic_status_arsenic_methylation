@@ -10,126 +10,140 @@
 library(tidyverse)
 library(betareg)
 
-##### Beta Regression ##########################################################
-# Proportions by BMI
-summary(model_bt_ias_bmi_unaj <- betareg(piAs01 ~ SEBMI_IQR | ln_uSum, data = df))
-summary(model_bt_ias_bmi_adj1 <- betareg(piAs01 ~ SEBMI_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI | ln_uSum, data = df))
-summary(model_bt_ias_bmi_adj2 <- betareg(piAs01 ~ SEBMI_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + ln_SEB12 + ln_SEHCY | ln_uSum, data = df))
+##### Fit Beta Regression Models ###############################################
+# Set Vectors of Arsenic Methylation and Anthropometric Terms
+tmp_y_bt <- c("piAs01","pMMA01","pDMA01")
+tmp_x_bt <- c("SEBMI_IQR","medSESUBSC_IQR","medSETRICEP_IQR","medSEMUAC_IQR",
+  "SEMUAFA_IQR","SEMUAMA_IQR")
 
-summary(model_bt_mma_bmi_unaj <- betareg(pMMA01 ~ SEBMI_IQR | ln_uSum, data = df))
-summary(model_bt_mma_bmi_adj1 <- betareg(pMMA01 ~ SEBMI_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI | ln_uSum, data = df))
-summary(model_bt_mma_bmi_adj2 <- betareg(pMMA01 ~ SEBMI_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + ln_SEB12 + ln_SEHCY | ln_uSum, data = df))
+# Initialize Tibble
+df_bt <- tibble()
 
-summary(model_bt_dma_bmi_unaj <- betareg(pDMA01 ~ SEBMI_IQR | ln_uSum, data = df))
-summary(model_bt_dma_bmi_adj1 <- betareg(pDMA01 ~ SEBMI_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI | ln_uSum, data = df))
-summary(model_bt_dma_bmi_adj2 <- betareg(pDMA01 ~ SEBMI_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + ln_SEB12 + ln_SEHCY | ln_uSum, data = df))
-
-# Proportions by Subscapular Skinfold
-summary(model_bt_ias_sub_unaj <- betareg(piAs01 ~ medSESUBSC_IQR | ln_uSum, data = df))
-summary(model_bt_ias_sub_adj1 <- betareg(piAs01 ~ medSESUBSC_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI | ln_uSum, data = df))
-summary(model_bt_ias_sub_adj2 <- betareg(piAs01 ~ medSESUBSC_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + ln_SEB12 + ln_SEHCY | ln_uSum, data = df))
-
-summary(model_bt_mma_sub_unaj <- betareg(pMMA01 ~ medSESUBSC_IQR | ln_uSum, data = df))
-summary(model_bt_mma_sub_adj1 <- betareg(pMMA01 ~ medSESUBSC_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI | ln_uSum, data = df))
-summary(model_bt_mma_sub_adj2 <- betareg(pMMA01 ~ medSESUBSC_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + ln_SEB12 + ln_SEHCY | ln_uSum, data = df))
-
-summary(model_bt_dma_sub_unaj <- betareg(pDMA01 ~ medSESUBSC_IQR | ln_uSum, data = df))
-summary(model_bt_dma_sub_adj1 <- betareg(pDMA01 ~ medSESUBSC_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI | ln_uSum, data = df))
-summary(model_bt_dma_sub_adj2 <- betareg(pDMA01 ~ medSESUBSC_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + ln_SEB12 + ln_SEHCY | ln_uSum, data = df))
-
-# Proportions by Triceps Skinfold
-summary(model_bt_ias_tri_unaj <- betareg(piAs01 ~ medSETRICEP_IQR | ln_uSum, data = df))
-summary(model_bt_ias_tri_adj1 <- betareg(piAs01 ~ medSETRICEP_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI | ln_uSum, data = df))
-summary(model_bt_ias_tri_adj2 <- betareg(piAs01 ~ medSETRICEP_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + ln_SEB12 + ln_SEHCY | ln_uSum, data = df))
-
-summary(model_bt_mma_tri_unaj <- betareg(pMMA01 ~ medSETRICEP_IQR | ln_uSum, data = df))
-summary(model_bt_mma_tri_adj1 <- betareg(pMMA01 ~ medSETRICEP_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI | ln_uSum, data = df))
-summary(model_bt_mma_tri_adj2 <- betareg(pMMA01 ~ medSETRICEP_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + ln_SEB12 + ln_SEHCY | ln_uSum, data = df))
-
-summary(model_bt_dma_tri_unaj <- betareg(pDMA01 ~ medSETRICEP_IQR | ln_uSum, data = df))
-summary(model_bt_dma_tri_adj1 <- betareg(pDMA01 ~ medSETRICEP_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI | ln_uSum, data = df))
-summary(model_bt_dma_tri_adj2 <- betareg(pDMA01 ~ medSETRICEP_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + ln_SEB12 + ln_SEHCY | ln_uSum, data = df))
-
-# Proportions by MUAC
-summary(model_bt_ias_arm_unaj <- betareg(piAs01 ~ medSEMUAC_IQR | ln_uSum, data = df))
-summary(model_bt_ias_arm_adj1 <- betareg(piAs01 ~ medSEMUAC_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI | ln_uSum, data = df))
-summary(model_bt_ias_arm_adj2 <- betareg(piAs01 ~ medSEMUAC_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + ln_SEB12 + ln_SEHCY | ln_uSum, data = df))
-
-summary(model_bt_mma_arm_unaj <- betareg(pMMA01 ~ medSEMUAC_IQR | ln_uSum, data = df))
-summary(model_bt_mma_arm_adj1 <- betareg(pMMA01 ~ medSEMUAC_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI | ln_uSum, data = df))
-summary(model_bt_mma_arm_adj2 <- betareg(pMMA01 ~ medSEMUAC_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + ln_SEB12 + ln_SEHCY | ln_uSum, data = df))
-
-summary(model_bt_dma_arm_unaj <- betareg(pDMA01 ~ medSEMUAC_IQR | ln_uSum, data = df))
-summary(model_bt_dma_arm_adj1 <- betareg(pDMA01 ~ medSEMUAC_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI | ln_uSum, data = df))
-summary(model_bt_dma_arm_adj2 <- betareg(pDMA01 ~ medSEMUAC_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + ln_SEB12 + ln_SEHCY | ln_uSum, data = df))
-
-##### Prepare Beta Regression Estimates: Methylation Proportions ###############
-# Compile Estimates
-estimates_bt_per <- rbind(
-  # Body Mass Index (BMI)
-  tidier(model_bt_ias_bmi_unaj, variable = "SEBMI_IQR", y = "iAs%", x = "BMI", adj = "Unadjusted"),
-  tidier(model_bt_ias_bmi_adj1, variable = "SEBMI_IQR", y = "iAs%", x = "BMI", adj = "Adjusted 1"),
-  tidier(model_bt_ias_bmi_adj2, variable = "SEBMI_IQR", y = "iAs%", x = "BMI", adj = "Adjusted 2"),
+# Fit Models
+for(i in 1:length(tmp_y_bt)) {
   
-  tidier(model_bt_mma_bmi_unaj, variable = "SEBMI_IQR", y = "MMA%", x = "BMI", adj = "Unadjusted"),
-  tidier(model_bt_mma_bmi_adj1, variable = "SEBMI_IQR", y = "MMA%", x = "BMI", adj = "Adjusted 1"),
-  tidier(model_bt_mma_bmi_adj2, variable = "SEBMI_IQR", y = "MMA%", x = "BMI", adj = "Adjusted 2"),
+  for(j in 1:length(tmp_x_bt)) {
   
-  tidier(model_bt_dma_bmi_unaj, variable = "SEBMI_IQR", y = "DMA%", x = "BMI", adj = "Unadjusted"),
-  tidier(model_bt_dma_bmi_adj1, variable = "SEBMI_IQR", y = "DMA%", x = "BMI", adj = "Adjusted 1"),
-  tidier(model_bt_dma_bmi_adj2, variable = "SEBMI_IQR", y = "DMA%", x = "BMI", adj = "Adjusted 2"),
-  
-  # Subscapular Skinfold
-  tidier(model_bt_ias_sub_unaj, variable = "medSESUBSC_IQR", y = "iAs%", x = "Subscapular Skinfold", adj = "Unadjusted"),
-  tidier(model_bt_ias_sub_adj1, variable = "medSESUBSC_IQR", y = "iAs%", x = "Subscapular Skinfold", adj = "Adjusted 1"),
-  tidier(model_bt_ias_sub_adj2, variable = "medSESUBSC_IQR", y = "iAs%", x = "Subscapular Skinfold", adj = "Adjusted 2"),
-  
-  tidier(model_bt_mma_sub_unaj, variable = "medSESUBSC_IQR", y = "MMA%", x = "Subscapular Skinfold", adj = "Unadjusted"),
-  tidier(model_bt_mma_sub_adj1, variable = "medSESUBSC_IQR", y = "MMA%", x = "Subscapular Skinfold", adj = "Adjusted 1"),
-  tidier(model_bt_mma_sub_adj2, variable = "medSESUBSC_IQR", y = "MMA%", x = "Subscapular Skinfold", adj = "Adjusted 2"),
-  
-  tidier(model_bt_dma_sub_unaj, variable = "medSESUBSC_IQR", y = "DMA%", x = "Subscapular Skinfold", adj = "Unadjusted"),
-  tidier(model_bt_dma_sub_adj1, variable = "medSESUBSC_IQR", y = "DMA%", x = "Subscapular Skinfold", adj = "Adjusted 1"),
-  tidier(model_bt_dma_sub_adj2, variable = "medSESUBSC_IQR", y = "DMA%", x = "Subscapular Skinfold", adj = "Adjusted 2"),
-  
-  # Triceps Skinfold
-  tidier(model_bt_ias_tri_unaj, variable = "medSETRICEP_IQR", y = "iAs%", x = "Triceps Skinfold", adj = "Unadjusted"),
-  tidier(model_bt_ias_tri_adj1, variable = "medSETRICEP_IQR", y = "iAs%", x = "Triceps Skinfold", adj = "Adjusted 1"),
-  tidier(model_bt_ias_tri_adj2, variable = "medSETRICEP_IQR", y = "iAs%", x = "Triceps Skinfold", adj = "Adjusted 2"),
-  
-  tidier(model_bt_mma_tri_unaj, variable = "medSETRICEP_IQR", y = "MMA%", x = "Triceps Skinfold", adj = "Unadjusted"),
-  tidier(model_bt_mma_tri_adj1, variable = "medSETRICEP_IQR", y = "MMA%", x = "Triceps Skinfold", adj = "Adjusted 1"),
-  tidier(model_bt_mma_tri_adj2, variable = "medSETRICEP_IQR", y = "MMA%", x = "Triceps Skinfold", adj = "Adjusted 2"),
-  
-  tidier(model_bt_dma_tri_unaj, variable = "medSETRICEP_IQR", y = "DMA%", x = "Triceps Skinfold", adj = "Unadjusted"),
-  tidier(model_bt_dma_tri_adj1, variable = "medSETRICEP_IQR", y = "DMA%", x = "Triceps Skinfold", adj = "Adjusted 1"),
-  tidier(model_bt_dma_tri_adj2, variable = "medSETRICEP_IQR", y = "DMA%", x = "Triceps Skinfold", adj = "Adjusted 2"),
-  
-  # Mid-upper Arm Circumference (MUAC)
-  tidier(model_bt_ias_arm_unaj, variable = "medSEMUAC_IQR", y = "iAs%", x = "MUAC", adj = "Unadjusted"),
-  tidier(model_bt_ias_arm_adj1, variable = "medSEMUAC_IQR", y = "iAs%", x = "MUAC", adj = "Adjusted 1"),
-  tidier(model_bt_ias_arm_adj2, variable = "medSEMUAC_IQR", y = "iAs%", x = "MUAC", adj = "Adjusted 2"),
-  
-  tidier(model_bt_mma_arm_unaj, variable = "medSEMUAC_IQR", y = "MMA%", x = "MUAC", adj = "Unadjusted"),
-  tidier(model_bt_mma_arm_adj1, variable = "medSEMUAC_IQR", y = "MMA%", x = "MUAC", adj = "Adjusted 1"),
-  tidier(model_bt_mma_arm_adj2, variable = "medSEMUAC_IQR", y = "MMA%", x = "MUAC", adj = "Adjusted 2"),
-  
-  tidier(model_bt_dma_arm_unaj, variable = "medSEMUAC_IQR", y = "DMA%", x = "MUAC", adj = "Unadjusted"),
-  tidier(model_bt_dma_arm_adj1, variable = "medSEMUAC_IQR", y = "DMA%", x = "MUAC", adj = "Adjusted 1"),
-  tidier(model_bt_dma_arm_adj2, variable = "medSEMUAC_IQR", y = "DMA%", x = "MUAC", adj = "Adjusted 2")
-)
+    # Unadjusted
+    fit_unaj <- betareg(get(tmp_y_bt[i]) ~ get(tmp_x_bt[j]) | ln_uSum, 
+      data = df)
+    df_bt_unaj <- tidy(fit_unaj, conf.int = TRUE)
+    df_bt_unaj <- df_bt_unaj %>%
+      mutate(y = tmp_y_bt[i]) %>%
+      mutate(x = tmp_x_bt[j]) %>%
+      mutate(adj = "Unadjusted")
+    
+    # Adjusted 1
+    fit_adj1 <- betareg(get(tmp_y_bt[i]) ~ get(tmp_x_bt[j]) + poly(ln_wAs, 2) + 
+        AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI | ln_uSum, 
+      data = df)
+    df_bt_adj1 <- tidy(fit_adj1, conf.int = TRUE)
+    df_bt_adj1 <- df_bt_adj1 %>%
+      mutate(y = tmp_y_bt[i]) %>%
+      mutate(x = tmp_x_bt[j]) %>%
+      mutate(adj = "Adjusted 1")
+    
+    # Adjusted 2
+    fit_adj2 <- betareg(get(tmp_y_bt[i]) ~ get(tmp_x_bt[j]) + poly(ln_wAs, 2) + 
+        AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + 
+        ln_SEB12 + ln_SEHCY | ln_uSum, 
+      data = df)
+    df_bt_adj2 <- tidy(fit_adj2, conf.int = TRUE)
+    df_bt_adj2 <- df_bt_adj2 %>%
+      mutate(y = tmp_y_bt[i]) %>%
+      mutate(x = tmp_x_bt[j]) %>%
+      mutate(adj = "Adjusted 2")
+    
+    # Compile Estimates
+    df_bt_ij <- rbind(
+      df_bt_unaj,
+      df_bt_adj1,
+      df_bt_adj2
+    )
+      
+    df_bt <- rbind(
+      df_bt,
+      df_bt_ij
+    )
+    
+  rm(list = c("fit_unaj","fit_adj1","fit_adj2","df_bt_unaj","df_bt_adj1",
+    "df_bt_adj2","df_bt_ij"))
+    
+  }
+}
 
-# Format Estimates
-estimates_bt_per <- estimates_bt_per %>%
+df_bt %>% head()
+
+##### Format Estimates #########################################################
+df_bt <- df_bt %>%
   mutate(adj = factor(adj,
     levels = c("Unadjusted","Adjusted 1","Adjusted 2")))
 
-estimates_bt_per <- estimates_bt_per %>%
+df_bt <- df_bt %>%
   mutate(y = factor(y,
-    levels = c("iAs%","MMA%","DMA%")))
+    levels = tmp_y_bt,
+    labels = c("iAs%","MMA%","DMA%")
+  ))
 
-estimates_bt_per <- estimates_bt_per %>%
+df_bt <- df_bt %>%
   mutate(x = factor(x,
-    levels = c("BMI","Subscapular Skinfold","Triceps Skinfold","MUAC")))
+    levels = tmp_x_bt,
+    labels = c("BMI","Subscapular","Triceps","MUAC","MUAFA","MUAMA")
+  ))
 
-estimates_bt_per
+df_bt <- df_bt %>%
+  filter(component == "mean") %>%
+  filter(term == "get(tmp_x_bt[j])") %>%
+  select(y, x, adj, estimate, conf.low, conf.high, p.value)
+
+df_bt %>% head()
+
+#### Fit Beta Regression Models: MUAFA and MUAMA ###############################
+# Initialize Tibble
+df_bt_mua <- tibble()
+
+# Fit Models
+for(i in 1:length(tmp_y_bt)) {
+
+    # (Adjusted 2 Only)
+    fit <- betareg(get(tmp_y_bt[i]) ~ SEMUAFA_IQR + SEMUAMA_IQR + 
+        poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI + 
+        ln_SEFOL + ln_SEB12 + ln_SEHCY | ln_uSum, 
+      data = df)
+    df_bt_mua_i <- tidy(fit, conf.int = TRUE)
+    df_bt_mua_i <- df_bt_mua_i %>%
+      mutate(y = tmp_y_bt[i]) %>%
+      mutate(adj = "Adjusted 2")
+    
+    # Compile Estimates
+    df_bt_mua <- rbind(df_bt_mua, df_bt_mua_i)
+    
+    rm(list = c("fit","df_bt_mua_i"))
+    
+}
+
+df_bt_mua %>% head()
+
+##### Format Estimates: MUAFA and MUAMA ########################################
+df_bt_mua <- df_bt_mua %>%
+  filter(component == "mean") %>%
+  filter(term %in% c("SEMUAFA_IQR","SEMUAMA_IQR"))
+
+df_bt_mua <- df_bt_mua %>%
+  mutate(y = factor(y,
+    levels = tmp_y_bt,
+    labels = c("iAs%","MMA%","DMA%")
+  ))
+
+df_bt_mua <- df_bt_mua %>%
+  mutate(x = factor(term,
+    levels = c("SEMUAFA_IQR","SEMUAMA_IQR"),
+    labels = c("MUAFA","MUAMA")
+  ))
+
+df_bt_mua <- df_bt_mua %>%
+  select(y, x, adj, estimate, conf.low, conf.high, p.value)
+
+df_bt_mua %>% head()
+
+

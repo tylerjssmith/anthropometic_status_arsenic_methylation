@@ -8,7 +8,6 @@
 ##### Preliminaries ############################################################
 # Load Packages
 library(tidyverse)
-library(mice)
 library(lubridate)
 
 ##### Read Data ################################################################
@@ -122,75 +121,22 @@ df %>% head()
 rm(list = c("pefsst","urine","water","pregtrak","parity","ses","ocm","agp"))
 
 ##### Check Missingness ########################################################
+# Check Implausible Values
+df %>% filter(medSEMUAC < 15 & SEBMI > 25)
+
+# Set Implausible Values to Missing
+df <- df %>%
+  mutate(medSEMUAC = ifelse(medSEMUAC < 15 & SEBMI > 25, NA, medSEMUAC))
+
 # Check Variables
 df %>% sapply(function(x) sum(is.na(x)))
 
-100 - (df %>% na.omit() %>% nrow() / df %>% nrow() * 100)
-
-# Check Pattern
-df %>% md.pattern(rotate.names = TRUE)
-
-# Evaluate Missingness of Subscapular Skinfold
-fig_miss_subsc_bmi <- df %>%
-  mutate(observed_subsc = ifelse(!is.na(medSESUBSC), "Yes", "No")) %>%
-  ggplot(aes(x = SEBMI, y = pDMA, color = factor(observed_subsc))) +
-  geom_point(alpha = 0.6) +
-  geom_smooth(method = "lm") +
-  labs(
-    title = "Observed Subscapular Skinfold",
-    x = expression("Body Mass Index (kg/m" ^ 2 * ")"),
-    y = "DMA%",
-    color = "Observed\nSubscapular\nSkinfold?") +
-  theme_bw()
-
-fig_miss_subsc_tri <- df %>%
-  mutate(observed_subsc = ifelse(!is.na(medSESUBSC), "Yes", "No")) %>%
-  ggplot(aes(x = medSETRICEP, y = pDMA, color = factor(observed_subsc))) +
-  geom_point(alpha = 0.6) +
-  geom_smooth(method = "lm") +
-  labs(
-    title = "Observed Subscapular Skinfold",
-    x = "Triceps Skinfold",
-    y = "DMA%",
-    color = "Observed\nSubscapular\nSkinfold?") +
-  theme_bw()
-
-fig_miss_subsc_muac <- df %>%
-  mutate(observed_subsc = ifelse(!is.na(medSESUBSC), "Yes", "No")) %>%
-  ggplot(aes(x = medSEMUAC, y = pDMA, color = factor(observed_subsc))) +
-  geom_point(alpha = 0.6) +
-  geom_smooth(method = "lm") +
-  labs(
-    title = "Observed Subscapular Skinfold",
-    x = "MUAC",
-    y = "DMA%",
-    color = "Observed\nSubscapular\nSkinfold?") +
-  theme_bw()
-
-# Evaluate Missingness of Drinking Water Arsenic
-fig_miss_was_bmi <- df %>%
-  mutate(observed_was = ifelse(!is.na(wAs), "Yes", "No")) %>%
-  ggplot(aes(x = SEBMI, y = pDMA, color = factor(observed_was))) +
-  geom_point(alpha = 0.6) +
-  geom_smooth(method = "lm") +
-  labs(
-    title = "Observed Drinking Water Arsenic",
-    x = expression("Body Mass Index (kg/m" ^ 2 * ")"),
-    y = "DMA%",
-    color = "Observed\nSubscapular\nSkinfold?") +
-  theme_bw()
-
-fig_miss_was_muac <- df %>%
-  mutate(observed_was = ifelse(!is.na(wAs), "Yes", "No")) %>%
-  ggplot(aes(x = medSEMUAC, y = pDMA, color = factor(observed_was))) +
-  geom_point(alpha = 0.6) +
-  geom_smooth(method = "lm") +
-  labs(
-    title = "Observed Drinking Water Arsenic",
-    x = "MUAC",
-    y = "DMA%",
-    color = "Observed\nSubscapular\nSkinfold?") +
-  theme_bw()
+df %>% 
+  na.omit() %>%
+  summarise(
+    n = n(),
+    p = round(n / 784 * 100, 1)
+  )
 
 # Drop Incomplete Cases
 df_all <- df
@@ -202,18 +148,11 @@ df <- df %>% na.omit()
 df <- df %>%
   mutate(ln_wAs = log(wAs))
 
-df <- df %>%
-  quartile(wAs4, wAs)
-
 # Age
 df <- df %>% 
   mutate(AGE = year(SEDATE) - DOBYY)
 
-df <- df %>%
-  quartile(AGE4, AGE)
-
 df %>%
-  group_by(AGE4) %>%
   summarise(
     n = n(),
     min = min(AGE),
@@ -257,7 +196,7 @@ df %>%
 
 # Living Standards Index
 df <- df %>%
-  quartile(LSI4, LSI)
+  mutate(LSI4 = ntile(LSI, 4))
 
 df %>%
   group_by(LSI4) %>%
@@ -275,13 +214,6 @@ df <- df %>%
   mutate(ln_SEHCY = log(SEHCY)) %>%
   mutate(ln_SEAGP = log(SEAGP))
 
-# (Obtain Quartiles)
-df <- df %>%
-  quartile(SEFOL4, SEFOL) %>%
-  quartile(SEB124, SEB12) %>%
-  quartile(SEHCY4, SEHCY) %>%
-  quartile(SEAGP4, SEAGP)
-
 # (Check Deficiencies)
 df %>%
   count(SEFOLCUT) %>%
@@ -295,15 +227,19 @@ df %>%
   count(SEHCYCUT) %>%
   mutate(pr = n / sum(n) * 100)
 
-##### Prepare: Anthropometric Status ###########################################
-# Calculate Height Categories
-df <- df %>%
-  mutate(medSEHEIGHTLT145 = ifelse(medSEHEIGHT < 145, 1, 0))
-
+##### Prepare: Anthropometric Measures #########################################
 # Calculate BMI Categories
 df <- df %>%
-  mutate(SEBMILT185 = ifelse(SEBMI < 18.5, 1, 0)) %>%
-  mutate(SEBMIGT25  = ifelse(SEBMI > 25,   1, 0))
+  mutate(
+    SEBMICUT = 
+      ifelse(SEBMI < 18.5, 0,
+      ifelse(SEBMI >= 18.5 & SEBMI < 25, 1,
+      ifelse(SEBMI >= 25, 2, NA)))
+  )
+
+df %>%
+  count(SEBMICUT) %>%
+  mutate(pr = n / sum(n) * 100)
 
 # Age Groups for Percent Body Fat
 df <- df %>%
@@ -346,13 +282,21 @@ df %>%
     max = max(SEBODYFAT)
   )
 
-# Anthropometric Status (Quartiles)
+# Mid-upper Arm Fat Area (MUAFA) and Muscle Area (MUAMA)
 df <- df %>%
-  quartile(SEBMI4, SEBMI) %>%
-  quartile(SEBODYFAT4, SEBODYFAT) %>%
-  quartile(medSESUBSC4, medSESUBSC) %>%
-  quartile(medSETRICEP4, medSETRICEP) %>%
-  quartile(medSEMUAC4, medSEMUAC)
+  mutate(medSETRICEP_CM = medSETRICEP / 10) %>%
+  mutate(SEMUAFA = ((medSETRICEP_CM * medSEMUAC) / 2) - ((pi * medSETRICEP_CM ^ 2) / 2)) %>%
+  mutate(SEMUAMA = ((medSEMUAC - (pi * medSETRICEP_CM)) ^ 2 / (4 * pi)) - 6.5)
+
+df %>%
+  select(SEMUAFA,SEMUAMA) %>%
+  pivot_longer(everything()) %>%
+  group_by(name) %>%
+  summarise(
+    n = n(),
+    min = min(value),
+    max = max(value)
+  )
 
 # Anthropometric Status (IQR Units)
 df <- df %>%
@@ -360,10 +304,12 @@ df <- df %>%
   mutate(SEBODYFAT_IQR   = SEBODYFAT   / IQR(SEBODYFAT,   na.rm = TRUE)) %>%
   mutate(medSEMUAC_IQR   = medSEMUAC   / IQR(medSEMUAC,   na.rm = TRUE)) %>%
   mutate(medSESUBSC_IQR  = medSESUBSC  / IQR(medSESUBSC,  na.rm = TRUE)) %>%
-  mutate(medSETRICEP_IQR = medSETRICEP / IQR(medSETRICEP, na.rm = TRUE))
+  mutate(medSETRICEP_IQR = medSETRICEP / IQR(medSETRICEP, na.rm = TRUE)) %>%
+  mutate(SEMUAFA_IQR     = SEMUAFA     / IQR(SEMUAFA,     na.rm = TRUE)) %>%
+  mutate(SEMUAMA_IQR     = SEMUAMA     / IQR(SEMUAMA,     na.rm = TRUE))
 
 ##### Prepare: Urinary Arsenic #################################################
-# Convert Percentages to Proportions for Beta Regression
+# Convert Percentages to Proportions for Beta and Dirichlet Regression Models
 df <- df %>%
   mutate(piAs01 = piAs / 100) %>%
   mutate(pMMA01 = pMMA / 100) %>%
@@ -382,9 +328,6 @@ df <- df %>%
 df <- df %>%
   mutate(ln_uSum = log(uSum))
 
-df <- df %>%
-  quartile(uSum4, uSum)
-
 # Urinary Arsenobetaine
 df %>%
   summarise(
@@ -396,13 +339,35 @@ df %>%
 ##### Finalize Analytic Data Set ###############################################
 df %>% colnames()
 
-# Select Variables
+# Select and Arrange Variables
 df <- df %>%
-  select(UID, contains("SEBMI"), contains("medSESUBSC"), contains("medSETRICEP"), 
-    contains("SEMUAC"), SEWEIGHT, contains("medSEHEIGHT"),  contains("SEBODYFAT"),
-    piAs, piAs01, pMMA, pMMA01, pDMA, pDMA01, PMI, ln_PMI, SMI, ln_SMI, uSum, ln_uSum, uSum4, 
-    wAs, ln_wAs, wAs4, AGE, AGE4, SEGSTAGE, SEGSTAGE4, PARITY, EDUCATION, 
-    LSI, LSI4, contains("SEFOL"), contains("SEB12"), contains("SEHCY"), 
-    contains("SEAGP"), uAsB)
+  select(
+    
+    # Identifier
+    UID,
+    
+    # Primary Anthropometric Measures
+    contains("SEBMI"), contains("medSESUBSC"), contains("medSETRICEP"), 
+    contains("SEMUAC"), contains("SEMUAFA"), contains("SEMUAMA"), 
+    
+    # Other Anthropometric Measures
+    SEWEIGHT, contains("medSEHEIGHT"), contains("SEBODYFAT"),
+    
+    # Arsenic Methylation Measures
+    piAs, piAs01, pMMA, pMMA01, pDMA, pDMA01, PMI, ln_PMI, SMI, ln_SMI, 
+    
+    # Arsenic Exposure Measures
+    uSum, ln_uSum, wAs, ln_wAs, uAsB,
+    
+    # Confounders
+    AGE, SEGSTAGE, SEGSTAGE4, PARITY, EDUCATION, LSI, LSI4, 
+    
+    # One-carbon Metabolism Micronutrient Status Biomarkers
+    contains("SEFOL"), contains("SEB12"), contains("SEHCY"), contains("SEAGP")
+    
+  )
 
 df %>% colnames()
+
+df %>% head()
+

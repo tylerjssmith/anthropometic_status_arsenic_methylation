@@ -9,11 +9,11 @@
 # Load Packages
 library(tidyverse)
 
-##### Generate Table S1 ########################################################
+##### Generate Table 5 #########################################################
 # Combine Estimates; Pivot Wider
-tblS2 <- estimates_bt_per %>%
+tblS2 <- df_lm %>%
   pivot_wider(id_cols = c(y, x), names_from = adj, values_from = c(estimate, conf.low, conf.high)) %>%
-  mutate(across(-c(x, y), ~ round(.x, 2)))
+  mutate(across(-c(x, y), ~ format(round(.x, 2), nsmall = 2)))
 
 tblS2 %>% head()
 
@@ -25,7 +25,7 @@ tblS2 <- tblS2 %>%
   mutate(adj2 = paste0(`estimate_Adjusted 2`, " (", `conf.low_Adjusted 2`, ", ", `conf.high_Adjusted 2`, ")")) %>%
   select(y, x, unaj, adj1, adj2)
 
-tblS2 %>% head(n = 9)
+tblS2 %>% head()
 
 ##### Export Table #############################################################
 write_csv(
@@ -33,3 +33,4 @@ write_csv(
   file = "~/Desktop/research/manuscripts/smith_etal_pair_anthropometry/tables_figures/pair_bodycomp_tblS2.csv",
   col_names = TRUE
 )
+

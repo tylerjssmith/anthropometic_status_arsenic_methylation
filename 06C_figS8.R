@@ -1,6 +1,6 @@
 ################################################################################
 # Pregnancy, Arsenic, and Immune Response (PAIR) Study
-# Anthropometric Status and Arsenic Methylation -- Figure S6
+# Anthropometric Status and Arsenic Methylation -- Figure S8
 
 # Tyler Smith
 # April 4, 2023
@@ -9,8 +9,8 @@
 # Load Packages
 library(tidyverse)
 
-##### Figure S5: Beta Regression Models - Methylation Proportions ##############
-(figS6 <- estimates_bt_per %>%
+##### Figure S8: Beta Regression Models - Methylation Proportions ##############
+(figS8 <- df_bt %>%
   ggplot(aes(x = adj, y = estimate, ymin = conf.low , ymax = conf.high, group = adj)) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   geom_errorbar(width = 0.05) +
@@ -23,10 +23,10 @@ library(tidyverse)
   th)
 
 ##### Export Figures ###########################################################
-# Figure S5
+# Figure S8
 ggsave(
-  plot = figS6,
-  filename = "~/Desktop/research/manuscripts/smith_etal_pair_anthropometry/tables_figures/pair_bodycomp_figS6.jpg",
+  plot = figS8,
+  filename = "~/Desktop/research/manuscripts/smith_etal_pair_anthropometry/tables_figures/pair_bodycomp_figS8.jpg",
   device = "jpeg",
   width = 9,
   height = 9,

@@ -46,25 +46,28 @@ source("03C_tbl3.R")
 source("04A_fig1_fig2.R")
 
 ##### 05: Supplemental Tables ##################################################
-# Make Table S1 (Linear)
+# Make Table S1 (AIC)
 source("05A_tblS1.R")
 
-# Make Table S2 (Beta)
+# Make Table S2 (Linear)
 source("05B_tblS2.R")
 
-# Make Table S3 (Dirichlet)
+# Make Table S3 (Beta)
 source("05C_tblS3.R")
+
+# Make Table S4 (Dirichlet)
+source("05D_tblS4.R")
 
 ##### 06: Supplemental Figures #################################################
 # Make Figure S1 (Histograms)
 source("06A_figS1.R")
 
-# Make Figure S2-S5 (LOESS)
-source("06B_figS2_figS3_figS4_figS5.R")
+# Make Figure S2-S7 (LOESS)
+source("06B_figS2-figS7.R")
 
-# Make Figure S6 (Beta)
-source("06C_figS6.R")
+# Make Figure S8 (Beta)
+source("06C_figS8.R")
 
-# Make Figure S7 (Dirichlet)
-source("06D_figS7.R")
+# Make Figure S9 (Dirichlet)
+source("06D_figS9.R")
 

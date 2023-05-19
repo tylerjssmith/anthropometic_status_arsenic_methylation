@@ -75,6 +75,8 @@ df_figS1 %>% head()
 df_figS1 %>%
   filter(Value %in% c(0,1))
 
+rm(df_figS1)
+
 ##### Export Figure ############################################################
 ggsave(
   plot = figS1,

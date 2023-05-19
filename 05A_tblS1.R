@@ -5,38 +5,61 @@
 # Tyler Smith
 # April 4, 2023
 
-##### Preliminaries ############################################################
-# Load Packages
-library(tidyverse)
+##### Compare AIC ##############################################################
+# Set Vectors of Arsenic Methylation and Anthropometric Terms
+tmp_y_aic <- c("piAs","pMMA","pDMA","ln_PMI","ln_SMI")
+tmp_x_aic <- c("SEBMI_IQR","medSESUBSC_IQR","medSETRICEP_IQR","medSEMUAC_IQR",
+  "SEMUAFA_IQR","SEMUAMA_IQR")
 
-##### Generate Table 5 #########################################################
-# Combine Estimates; Pivot Wider
-tblS1_per <- estimates_lm_per %>%
-  pivot_wider(id_cols = c(y, x), names_from = adj, values_from = c(estimate, conf.low, conf.high)) %>%
-  mutate(across(-c(x, y), ~ round(.x, 2)))
+# Initialize Tibble
+df_tblS1 <- tibble()
 
-tblS1_ind <- estimates_lm_indices %>%
-  pivot_wider(id_cols = c(y, x), names_from = adj, values_from = c(estimate, conf.low, conf.high)) %>%
-  mutate(across(-c(x, y), ~ round(.x, 2)))
+# Loop
+for(i in 1:length(tmp_y_aic)) {
+  
+  for(j in 1:length(tmp_x_aic)) {
+ 
+    out_ij <- df %>% 
+      compare_aic(
+        y = tmp_y_aic[i], 
+        x = tmp_x_aic[j]
+      )
+    
+    df_tblS1 <- rbind(df_tblS1, out_ij)
+    
+    rm(out_ij)
+       
+  }
+}
 
-tblS1 <- rbind(tblS1_per, tblS1_ind)
+df_tblS1 %>% head()
 
-tblS1 %>% head()
+##### Generate Table ###########################################################
+# Round
+tblS1 <- df_tblS1 %>%
+  mutate(aic = round(aic, 1))
 
-# Format Table
+# Pivot Wider
 tblS1 <- tblS1 %>%
-  arrange(y, x) %>%
-  mutate(unaj = paste0( estimate_Unadjusted,  " (",  conf.low_Unadjusted,  ", ",  conf.high_Unadjusted,  ")")) %>%
-  mutate(adj1 = paste0(`estimate_Adjusted 1`, " (", `conf.low_Adjusted 1`, ", ", `conf.high_Adjusted 1`, ")")) %>%
-  mutate(adj2 = paste0(`estimate_Adjusted 2`, " (", `conf.low_Adjusted 2`, ", ", `conf.high_Adjusted 2`, ")")) %>%
-  select(y, x, unaj, adj1, adj2)
+  pivot_wider(
+    id_cols = c(y,x),
+    names_from = degree,
+    values_from = aic)
 
-tblS1 %>% head()
+# Indicate Lower AIC
+tblS1 <- tblS1 %>%
+  mutate(lower_aic = ifelse(`2` < `1`, "Quadratic", "Linear"))
+
+rm(df_tblS1)
 
 ##### Export Table #############################################################
 write_csv(
   x = tblS1,
-  file = "~/Desktop/research/manuscripts/smith_etal_pair_anthropometry/tables_figures/pair_bodycomp_tblS1.csv",
+  file = "../../tables_figures/pair_bodycomp_tblS1.csv",
   col_names = TRUE
 )
+
+
+
+
 

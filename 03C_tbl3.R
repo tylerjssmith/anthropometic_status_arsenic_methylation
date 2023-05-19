@@ -10,22 +10,52 @@
 library(tidyverse)
 library(ggcorrplot)
 library(correlation)
+library(corrplot)
 
-##### Generate Table 4 #########################################################
-# Generate Table
-(tbl3 <- df %>% 
-  select(piAs, pMMA, pDMA, PMI, SMI, SEBMI, medSESUBSC, medSETRICEP, medSEMUAC, SEFOL, SEB12, SEHCY) %>% 
+##### Generate Table 3 #########################################################
+# Extract Data
+df_tbl3 <- df %>% 
+  select(
+    # Arsenic Methylation
+    piAs,pMMA,pDMA,PMI,SMI,
+    
+    # Anthropometric Measures
+    SEBMI,medSESUBSC,medSETRICEP,medSEMUAC,SEMUAFA,SEMUAMA,
+    
+    # One-Carbon Metabolism Micronutrient Status
+    SEFOL,SEB12,SEHCY
+  )
+
+# Calculate Correlations
+tbl3_M <- df_tbl3 %>%
   cor(., method = "spearman") %>%
-  round(., digits = 2) %>%
-  as_tibble(rownames = "Variable"))
+  round(., 2)
 
-# Calculate p Values
-tbl3_pval <- df %>% 
-  select(piAs, pMMA, pDMA, PMI, SMI, SEBMI, medSESUBSC, medSETRICEP, medSEMUAC, SEFOL, SEB12, SEHCY) %>% 
-  cor_pmat(method = "spearman")
+tbl3_M
 
-# Assess p<0.05
-(tbl3_pval < 0.05)
+# Calculate p-values
+tbl3_pval <- df_tbl3 %>%
+  cor_pmat(method = "spearman") %>%
+  round(., 4)
+
+(tbl3_M <- ifelse(lower.tri(tbl3_M), tbl3_M, NA))
+(tbl3_pval <- ifelse(lower.tri(tbl3_pval), tbl3_pval, NA))
+
+# Generate Table 3 
+tbl3 <- ifelse(tbl3_pval < 0.05 & tbl3_pval >= 0.01, paste("*",tbl3_M),
+        ifelse(tbl3_pval < 0.01 & tbl3_pval >= 0.001, paste("**",tbl3_M),
+        ifelse(tbl3_pval < 0.001, paste("***",tbl3_M), tbl3_M)))
+
+
+colnames(tbl3) <- colnames(df_tbl3)
+rownames(tbl3) <- colnames(df_tbl3)
+
+tbl3 <- tbl3 %>% 
+  as_tibble(rownames = "var")
+
+tbl3 %>% head()
+
+rm(list = c("df_tbl3","tbl3_M","tbl3_pval"))
 
 ##### Export Table #############################################################
 write_csv(

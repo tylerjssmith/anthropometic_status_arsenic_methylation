@@ -26,16 +26,12 @@ th <- theme_bw() +
   )
 
 ##### Make Plot Labels #########################################################
-# Label Anthropometric Status Measures
-x_labs <- c("BMI","Subscapular Skinfold","Triceps Skinfold","MUAC")
-names(x_labs) <- c("BMI","Subscapular Skinfold","Triceps Skinfold","MUAC")
-
-# (Dirichlet Models)
-x_labs_dr <- c("BMI","Subscapular Skinfold","Triceps Skinfold","MUAC")
-names(x_labs_dr) <- c("SEBMI_IQR","medSESUBSC_IQR","medSETRICEP_IQR","medSEMUAC_IQR")
+# Label Anthropometric Measures
+x_labs <- c("BMI","Subscapular","Triceps","MUAC","MUAFA","MUAMA")
+names(x_labs) <- c("BMI","Subscapular","Triceps","MUAC","MUAFA","MUAMA")
 
 # Label Methylation Indices
 index_labs <- c("Primary Methylation Index","Secondary Methylation Index")
-names(index_labs) <- c("PMI","SMI")
+names(index_labs) <- c("ln_PMI","ln_SMI")
 
 

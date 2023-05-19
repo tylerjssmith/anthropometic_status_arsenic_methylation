@@ -10,64 +10,104 @@
 library(tidyverse)
 library(DirichletReg)
 
-##### Dirichlet Regression #####################################################
+##### Fit Dirichlet Regression Models ##########################################
 # Define Multivariate Outcome
-df_dr <- df
+df_mvY <- df
 
-df_dr$Y <- DR_data(df_dr[, c("piAs01","pMMA01","pDMA01")], base = 1)
+df_mvY$Y <- DR_data(df_mvY[, c("piAs01","pMMA01","pDMA01")], base = 1)
 
-# Proportions by BMI
-summary(model_dr_bmi_unaj <- DirichReg(Y ~ SEBMI_IQR | ln_uSum, data = df_dr, model = "alternative"))
-summary(model_dr_bmi_adj1 <- DirichReg(Y ~ SEBMI_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI | ln_uSum, data = df_dr, model = "alternative"))
-summary(model_dr_bmi_adj2 <- DirichReg(Y ~ SEBMI_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + ln_SEB12 + ln_SEHCY | ln_uSum, data = df_dr, model = "alternative"))
+# Set Vectors of Anthropometric Terms
+tmp_x_dr <- c("SEBMI_IQR","medSESUBSC_IQR","medSETRICEP_IQR","medSEMUAC_IQR",
+  "SEMUAFA_IQR","SEMUAMA_IQR")
 
-# Proportions by Subscapular Skinfold
-summary(model_dr_sub_unaj <- DirichReg(Y ~ medSESUBSC_IQR | ln_uSum, data = df_dr, model = "alternative"))
-summary(model_dr_sub_adj1 <- DirichReg(Y ~ medSESUBSC_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI | ln_uSum, data = df_dr, model = "alternative"))
-summary(model_dr_sub_adj2 <- DirichReg(Y ~ medSESUBSC_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + ln_SEB12 + ln_SEHCY | ln_uSum, data = df_dr, model = "alternative"))
+# Initialize Tibble
+df_dr <- tibble()
 
-# Proportions by Triceps Skinfold
-summary(model_dr_tri_unaj <- DirichReg(Y ~ medSETRICEP_IQR | ln_uSum, data = df_dr, model = "alternative"))
-summary(model_dr_tri_adj1 <- DirichReg(Y ~ medSETRICEP_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI | ln_uSum, data = df_dr, model = "alternative"))
-summary(model_dr_tri_adj2 <- DirichReg(Y ~ medSETRICEP_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + ln_SEB12 + ln_SEHCY | ln_uSum, data = df_dr, model = "alternative"))
-
-# Proportions by MUAC
-summary(model_dr_arm_unaj <- DirichReg(Y ~ medSEMUAC_IQR | ln_uSum, data = df_dr, model = "alternative"))
-summary(model_dr_arm_adj1 <- DirichReg(Y ~ medSEMUAC_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI | ln_uSum, data = df_dr, model = "alternative"))
-summary(model_dr_arm_adj2 <- DirichReg(Y ~ medSEMUAC_IQR + poly(ln_wAs, 2) + AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + ln_SEB12 + ln_SEHCY | ln_uSum, data = df_dr, model = "alternative"))
-
-##### Prepare Dirichlet Regression Estimates: Methylation Proportions ##########
-# Compile Estimates
-estimates_dr_per <- rbind(
-  # Body Mass Index
-  tidier_dr(model_dr_bmi_unaj, set = "Unadjusted", x = "SEBMI_IQR"),
-  tidier_dr(model_dr_bmi_adj1, set = "Adjusted 1", x = "SEBMI_IQR"),
-  tidier_dr(model_dr_bmi_adj2, set = "Adjusted 2", x = "SEBMI_IQR"),
+# Fit Models
+for(j in 1:length(tmp_x_dr)) {
   
-  # Subscapular Skinfold
-  tidier_dr(model_dr_sub_unaj, set = "Unadjusted", x = "medSESUBSC_IQR"),
-  tidier_dr(model_dr_sub_adj1, set = "Adjusted 1", x = "medSESUBSC_IQR"),
-  tidier_dr(model_dr_sub_adj2, set = "Adjusted 2", x = "medSESUBSC_IQR"),
+  # Unadjusted
+  fit_unaj <- DirichReg(Y ~ get(tmp_x_dr[j]) | ln_uSum, 
+    data = df_mvY, model = "alternative")
   
-  # Triceps Skinfold
-  tidier_dr(model_dr_tri_unaj, set = "Unadjusted", x = "medSETRICEP_IQR"),
-  tidier_dr(model_dr_tri_adj1, set = "Adjusted 1", x = "medSETRICEP_IQR"),
-  tidier_dr(model_dr_tri_adj2, set = "Adjusted 2", x = "medSETRICEP_IQR"),
+  df_dr_unaj <- tidy_dr(fit_unaj, 
+    x = tmp_x_dr[j], 
+    adj = "Unadjusted"
+  )
+    
+  # Adjusted 1
+  fit_adj1 <- DirichReg(Y ~ get(tmp_x_dr[j]) + poly(ln_wAs, 2) + 
+      AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI | ln_uSum, 
+    data = df_mvY, model = "alternative")
   
-  # Mid-upper Arm Circumference
-  tidier_dr(model_dr_arm_unaj, set = "Unadjusted", x = "medSEMUAC_IQR"),
-  tidier_dr(model_dr_arm_adj1, set = "Adjusted 1", x = "medSEMUAC_IQR"),
-  tidier_dr(model_dr_arm_adj2, set = "Adjusted 2", x = "medSEMUAC_IQR")
-)
+  df_dr_adj1 <- tidy_dr(fit_adj1, 
+    x = tmp_x_dr[j], 
+    adj = "Adjusted 1"
+  )
+    
+  # Adjusted 2
+  fit_adj2 <- DirichReg(Y ~ get(tmp_x_dr[j]) + poly(ln_wAs, 2) + 
+      AGE + factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + 
+      ln_SEB12 + ln_SEHCY | ln_uSum, 
+    data = df_mvY, model = "alternative")
+  
+  df_dr_adj2 <- tidy_dr(fit_adj2, 
+    x = tmp_x_dr[j], 
+    adj = "Adjusted 2"
+  )
+  
+  # Compile Estimates
+  df_dr_j <- rbind(
+    df_dr_unaj,
+    df_dr_adj1,
+    df_dr_adj2
+  )
+  
+  df_dr <- rbind(df_dr, df_dr_j)
 
-# Format Estimates
-estimates_dr_per <- estimates_dr_per %>%
-  mutate(set = factor(set, levels = c("Unadjusted","Adjusted 1","Adjusted 2")))
+  rm(list = c("fit_unaj","fit_adj1","fit_adj2","df_dr_unaj","df_dr_adj1",
+    "df_dr_adj2","df_dr_j"))
+  
+}
 
-estimates_dr_per <- estimates_dr_per %>%
-  mutate(term = factor(term, levels = c("SEBMI_IQR","medSESUBSC_IQR","medSETRICEP_IQR","medSEMUAC_IQR")))
+df_dr %>% head()
 
-estimates_dr_per <- estimates_dr_per %>%
-  mutate(y = factor(y, levels = c("MMA%","DMA%")))
+##### Format Estimates #########################################################
+df_dr <- df_dr %>%
+  mutate(adj = factor(adj,
+    levels = c("Unadjusted","Adjusted 1","Adjusted 2")))
 
-estimates_dr_per
+df_dr <- df_dr %>%
+  mutate(y = factor(y,
+    levels = c("MMA%","DMA%")
+  ))
+
+df_dr <- df_dr %>%
+  mutate(x = factor(x,
+    levels = tmp_x_bt,
+    labels = c("BMI","Subscapular","Triceps","MUAC","MUAFA","MUAMA")
+  ))
+
+df_dr <- df_dr %>%
+  select(y, x, adj, estimate, conf.low, conf.high, p.value)
+
+df_dr %>% head()
+
+##### Fit Dirichlet Regression Models: MUAFA and MUAMA #########################
+fit_dr_mua <- DirichReg(Y ~ SEMUAFA_IQR + SEMUAMA_IQR + poly(ln_wAs, 2) + AGE + 
+    factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + ln_SEB12 + ln_SEHCY | ln_uSum, 
+  data = df_mvY, model = "alternative")
+
+##### Format Estimates: MUAFA and MUAMA ########################################
+df_dr_mua <- unclass(summary(fit_dr_mua))$coef.mat %>%
+    as_tibble(rownames = "term") %>%
+    filter(term %in% c("SEMUAFA_IQR","SEMUAMA_IQR")) %>%
+    mutate(y = rep(c("MMA%","DMA%"), 2)) %>%
+    mutate(x = term) %>%
+    mutate(adj = "Adjusted 2") %>%
+    mutate(conf.low = Estimate - 1.96 * `Std. Error`) %>%
+    mutate(conf.high = Estimate + 1.96 * `Std. Error`) %>%
+    select(y, x, adj, estimate = Estimate, conf.low, conf.high, 
+      p.value = `Pr(>|z|)`)
+
+rm(fit_dr_mua)

@@ -10,29 +10,35 @@
 library(tidyverse)
 
 ##### Figure 1: Linear Regression - Methylation Percentages ####################
-(fig1 <- estimates_lm_per %>%
+(fig1 <- df_lm %>%
+  filter(!y %in% c("ln_PMI","ln_SMI")) %>%
   ggplot(aes(x = adj, y = estimate, ymin = conf.low , ymax = conf.high, group = adj)) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   geom_errorbar(width = 0.05) +
   geom_point() +
-  scale_y_continuous(breaks = seq(-100,100,0.5)) +
+  scale_y_continuous(breaks = seq(-100,100,1)) +
   facet_grid(x ~ y, labeller = labeller(x = x_labs)) +
   labs(
     x = NULL,
-    y = "Mean Difference in Arsenic Methylation Percentage\nper IQR-unit Difference in Anthropometric Measure\n(95% Confidence Interval)") +
+    y = "Mean Difference in Arsenic Methylation Percentage
+    per IQR-unit Difference in Anthropometric Measure
+    (95% Confidence Interval)") +
   th)
 
 ##### Figure 2: Linear Regression - Methylation Indices ########################
-(fig2 <- estimates_lm_indices %>%
+(fig2 <- df_lm %>%
+  filter(y %in% c("ln_PMI","ln_SMI")) %>%
   ggplot(aes(x = adj, y = estimate, ymin = conf.low, ymax = conf.high, group = adj)) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   geom_errorbar(width = 0.05) +
   geom_point() +
-  scale_y_continuous(breaks = seq(-100,100,5)) +
+  scale_y_continuous(breaks = seq(-100,100,10)) +
   facet_grid(x ~ y, labeller = labeller(x = x_labs, y = index_labs)) +
   labs(
     x = NULL,
-    y = "Mean Percent Difference in Arsenic Methylation Index\nper IQR-unit Difference in Anthropometric Measure\n(95% Confidence Interval)") +
+    y = "Mean Percent Difference in Arsenic Methylation Index
+    per IQR-unit Difference in Anthropometric Measure
+    (95% Confidence Interval)") +
   th)
 
 ##### Export Figures ###########################################################
