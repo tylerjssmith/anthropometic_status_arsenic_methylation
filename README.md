@@ -4,7 +4,7 @@ This repository contains the R code for an analysis of anthropometric status and
 
 ## 00 Make File
 
-* [Make File (00_make.R)](00_make.R)
+* [Make File](00_make.R)
 
 ## 01 Setup
 
