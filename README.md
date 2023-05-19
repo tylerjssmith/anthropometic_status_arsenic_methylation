@@ -50,9 +50,9 @@ The fifth set of scripts makes Tables S1-S3, which report coefficients and confi
 The sixth set of scripts makes Figures S1-S7. Figure S1 compares dependent variable distributions on linear and natural log scales. Figures S2-S5 are scatter plots of arsenic methylation by anthropometric measures used to assess linearity. Figures S6-S6 report coefficients and confidence intervals from the beta and Dirichlet regression models.
 
 * [Figure S1: Histograms of Arsenic Methylation](06A_figS1.R)
-* [Figure S2-S7: Scatter Plots](06B_figS2_figS3_figS4_figS5.R)
-* [Figure S8: Beta Regression](06C_figS6.R)
-* [Figure S9: Dirichlet Regression](06D_figS7.R)
+* [Figure S2-S7: Scatter Plots](06B_figS2-figS7.R)
+* [Figure S8: Beta Regression](06C_figS8.R)
+* [Figure S9: Dirichlet Regression](06D_figS9.R)
 
 
 
