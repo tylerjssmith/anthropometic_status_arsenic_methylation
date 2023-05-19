@@ -54,7 +54,7 @@ tbl1_cont <- function(data, x, group = SEBMICUT, xlab = "Variable")
   out_raw <- data %>%
     group_by({{ group }}) %>%
     summarise(
-      mean = mean({{ x }}),
+      median = median({{ x }}),
       q1 = quantile({{ x }}, 0.25),
       q3 = quantile({{ x }}, 0.75)
     )
@@ -62,7 +62,7 @@ tbl1_cont <- function(data, x, group = SEBMICUT, xlab = "Variable")
   # Format Statistics
   out <- out_raw %>%
     mutate(across(everything(), ~ round(.x, 1))) %>%
-    mutate(value = paste0(mean, " (", q1, ", ", q3, ")")) %>%
+    mutate(value = paste0(median, " (", q1, ", ", q3, ")")) %>%
     mutate(xlab = {{ xlab }}) %>%
     mutate(xval = "NA") %>%
     select({{ group }}, xlab, xval, value)

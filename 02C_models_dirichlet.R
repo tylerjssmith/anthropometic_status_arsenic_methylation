@@ -99,15 +99,29 @@ fit_dr_mua <- DirichReg(Y ~ SEMUAFA_IQR + SEMUAMA_IQR + poly(ln_wAs, 2) + AGE +
   data = df_mvY, model = "alternative")
 
 ##### Format Estimates: MUAFA and MUAMA ########################################
-df_dr_mua <- unclass(summary(fit_dr_mua))$coef.mat %>%
-    as_tibble(rownames = "term") %>%
-    filter(term %in% c("SEMUAFA_IQR","SEMUAMA_IQR")) %>%
-    mutate(y = rep(c("MMA%","DMA%"), 2)) %>%
-    mutate(x = term) %>%
-    mutate(adj = "Adjusted 2") %>%
-    mutate(conf.low = Estimate - 1.96 * `Std. Error`) %>%
-    mutate(conf.high = Estimate + 1.96 * `Std. Error`) %>%
-    select(y, x, adj, estimate = Estimate, conf.low, conf.high, 
-      p.value = `Pr(>|z|)`)
+pt_mma <- confint(fit_dr_mua)$coefficients$beta$pMMA01 %>%
+  as_tibble(rownames = "term", .name_repair = "universal") %>%
+  mutate(y = "MMA%")
+pt_dma <- confint(fit_dr_mua)$coefficients$beta$pDMA01 %>%
+  as_tibble(rownames = "term", .name_repair = "universal") %>%
+  mutate(y = "DMA%")
 
-rm(fit_dr_mua)
+ci_mma <- confint(fit_dr_mua)$ci[[1]]$pMMA01 %>%
+  as_tibble(rownames = "term", .name_repair = "universal") %>%
+  mutate(y = "MMA%")
+ci_dma <- confint(fit_dr_mua)$ci[[1]]$pDMA01 %>%
+  as_tibble(rownames = "term", .name_repair = "universal") %>%
+  mutate(y = "DMA%")
+
+pt_ci_mma <- left_join(pt_mma, ci_mma, by = c("y","term")) %>%
+  select(y, x = term, estimate = value, conf.low = ...1, conf.high = ...2) %>%
+  filter(x %in% tmp_x_dr)
+pt_ci_dma <- left_join(pt_dma, ci_dma, by = c("y","term")) %>%
+  select(y, x = term, estimate = value, conf.low = ...1, conf.high = ...2) %>%
+  filter(x %in% tmp_x_dr)
+
+df_dr_mua <- rbind(pt_ci_mma, pt_ci_dma)
+
+df_dr_mua %>% head()
+
+rm(list = c("fit_dr_mua","pt_mma","pt_dma","ci_mma","ci_dma","pt_ci_mma","pt_ci_dma"))
