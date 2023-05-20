@@ -44,6 +44,7 @@ The fifth set of scripts makes Tables S1-S3, which report coefficients and confi
 * [Table S2: Linear Regression](05B_tblS2.R)
 * [Table S3: Beta Regression](05C_tblS3.R)
 * [Table S4: Dirichlet Regression](05D_tblS4.R)
+* [Tables 2A, 3A, 4A: MUAFA and MUAMA Models](05E_tblS2A-tblS3A-tblS4A.R)
 
 ## 06 Supplemental Figures
 
