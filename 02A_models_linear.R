@@ -117,7 +117,7 @@ df_lm_mua <- tibble()
 
 # Fit Models
 for(i in 1:length(tmp_y_lm)) {
-  fit <- lm(get(tmp_y_lm[i]) ~ SEMUAFA + SEMUAMA + poly(ln_wAs, 2) + AGE + 
+  fit <- lm(get(tmp_y_lm[i]) ~ SEMUAFA_IQR + SEMUAMA_IQR + poly(ln_wAs, 2) + AGE + 
       factor(SEGSTAGE4) + factor(EDUCATION) + LSI + ln_SEFOL + ln_SEB12 + 
       ln_SEHCY, data = df)
   df_lm_mua_i <- tidy(fit, conf.int = TRUE)
@@ -136,7 +136,7 @@ for(i in 1:length(tmp_y_lm)) {
 ##### Format Estimates: MUAFA and MUAMA ########################################
 # Limit to Anthropometric Measures
 df_lm_mua <- df_lm_mua %>%
-  filter(term %in% c("SEMUAFA","SEMUAMA")) %>%
+  filter(term %in% c("SEMUAFA_IQR","SEMUAMA_IQR")) %>%
   select(y, x = term, estimate, conf.low, conf.high, p.value)
 
 df_lm_mua %>% head()
@@ -156,7 +156,7 @@ df_lm_mua <- df_lm_mua %>%
 # Label Anthropometric Measures
 df_lm_mua <- df_lm_mua %>%
   mutate(x = factor(x,
-    levels = c("SEMUAFA","SEMUAMA"),
+    levels = c("SEMUAFA_IQR","SEMUAMA_IQR"),
     labels = c("MUAFA","MUAMA")
   ))
 
