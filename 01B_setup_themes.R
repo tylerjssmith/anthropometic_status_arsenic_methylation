@@ -14,7 +14,7 @@ th <- theme_bw() +
   theme(
     panel.grid.major.x = element_blank(),
     panel.grid.minor = element_blank(),
-    plot.title = element_text(lineheight = 1.05, size = 12),
+    plot.title = element_text(lineheight = 1.05, size = 12, face = "bold"),
     plot.subtitle = element_text(lineheight = 1.05, margin = margin(b = 10), size = 12),
     strip.text = element_text(size = 12),
     axis.title = element_text(margin = margin(r = 10), lineheight = 1.05, size = 12),
