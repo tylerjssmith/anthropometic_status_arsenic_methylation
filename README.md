@@ -1,6 +1,8 @@
-# Anthropometric Status and Arsenic Methylation among Pregnant Women in Rural Northern Bangladesh
+# Anthropometric Measures and Arsenic Methylation among Pregnant Women in Rural Northern Bangladesh
 
-This repository contains the R code for an analysis of anthropometric status and arsenic methylation among pregnant women in rural northern Bangladesh. The analysis was conducted using data from the enrollment visit of the Pregnancy, Arsenic, and Immune Response (PAIR) Study. You can learn more about the PAIR Study [here](https://doi.org/10.1111/ppe.12949).
+This repository contains the R code for an analysis of anthropometric measures and arsenic methylation among pregnant women in rural northern Bangladesh. The analysis has been published in *Environmental Research*, available [here](https://doi.org/10.1016/j.envres.2023.116453).
+
+The analysis was conducted using data from the enrollment visit of the Pregnancy, Arsenic, and Immune Response (PAIR) Study. The cohort profile for the PAIR Study has been published in *Paediatric and Perinatal Epidemiology*, available [here](https://doi.org/10.1111/ppe.12949).
 
 ## 00 Make File
 
@@ -38,16 +40,17 @@ The fourth set of scripts makes Figures 1-2, which report coefficients and confi
 
 ## 05 Supplemental Tables
 
-The fifth set of scripts makes Tables S1-S3, which report coefficients and confidence intervals from the linear, beta, and Dirichlet regression models.
+The fifth set of scripts makes Table S1, which reports AIC values for linear and quadratic model terms, as well as Tables S2-S4, which report coefficients and confidence intervals from the linear, beta, and Dirichlet regression models.
 
 * [Table S1: AIC](05A_tblS1.R)
 * [Table S2: Linear Regression](05B_tblS2.R)
 * [Table S3: Beta Regression](05C_tblS3.R)
 * [Table S4: Dirichlet Regression](05D_tblS4.R)
+* [Tables 2A, 3A, 4A: MUAFA and MUAMA Models](05E_tblS2A-tblS3A-tblS4A.R)
 
 ## 06 Supplemental Figures
 
-The sixth set of scripts makes Figures S1-S7. Figure S1 compares dependent variable distributions on linear and natural log scales. Figures S2-S5 are scatter plots of arsenic methylation by anthropometric measures used to assess linearity. Figures S6-S6 report coefficients and confidence intervals from the beta and Dirichlet regression models.
+The sixth set of scripts makes Figures S1-S9. Figure S1 compares dependent variable distributions on linear and natural log scales. Figures S2-S7 are scatter plots of arsenic methylation by anthropometric measures used to assess linearity. Figures S8-S9 report coefficients and confidence intervals from the beta and Dirichlet regression models.
 
 * [Figure S1: Histograms of Arsenic Methylation](06A_figS1.R)
 * [Figure S2-S7: Scatter Plots](06B_figS2-figS7.R)
