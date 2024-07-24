@@ -194,18 +194,6 @@ df %>%
   count(EDUCATION) %>%
   mutate(pr = n / sum(n) * 100)
 
-# Living Standards Index
-df <- df %>%
-  mutate(LSI4 = ntile(LSI, 4))
-
-df %>%
-  group_by(LSI4) %>%
-  summarise(
-    n = n(),
-    min = min(LSI),
-    max = max(LSI)
-  )
-
 # One-carbon Metabolism (OCM) Micronutrient Status
 # (Obtain Natural-log Transformation)
 df <- df %>%
@@ -288,6 +276,9 @@ df <- df %>%
   mutate(SEMUAFA = ((medSETRICEP_CM * medSEMUAC) / 2) - ((pi * medSETRICEP_CM ^ 2) / 2)) %>%
   mutate(SEMUAMA = ((medSEMUAC - (pi * medSETRICEP_CM)) ^ 2 / (4 * pi)) - 6.5)
 
+df <- df %>%
+  select(-medSETRICEP_CM)
+
 df %>%
   select(SEMUAFA,SEMUAMA) %>%
   pivot_longer(everything()) %>%
@@ -351,7 +342,7 @@ df <- df %>%
     contains("SEMUAC"), contains("SEMUAFA"), contains("SEMUAMA"), 
     
     # Other Anthropometric Measures
-    SEWEIGHT, contains("medSEHEIGHT"), contains("SEBODYFAT"),
+    SEWEIGHT, medSEHEIGHT,
     
     # Arsenic Methylation Measures
     piAs, piAs01, pMMA, pMMA01, pDMA, pDMA01, PMI, ln_PMI, SMI, ln_SMI, 
@@ -360,10 +351,10 @@ df <- df %>%
     uSum, ln_uSum, wAs, ln_wAs, uAsB,
     
     # Confounders
-    AGE, SEGSTAGE, SEGSTAGE4, PARITY, EDUCATION, LSI, LSI4, 
+    AGE, SEGSTAGE, SEGSTAGE4, PARITY, EDUCATION, LSI, 
     
     # One-carbon Metabolism Micronutrient Status Biomarkers
-    contains("SEFOL"), contains("SEB12"), contains("SEHCY"), contains("SEAGP")
+    contains("SEFOL"), contains("SEB12"), contains("SEHCY")
     
   )
 
